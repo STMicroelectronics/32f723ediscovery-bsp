@@ -58,11 +58,11 @@ typedef struct
   * @{
   */
 /**
- * @brief STM32F723E Discovery BSP Driver version number V1.0.3
+ * @brief STM32F723E Discovery BSP Driver version number V1.1.0
    */
 #define __STM32F723E_DISCOVERY_BSP_VERSION_MAIN   (0x01) /*!< [31:24] main version */
-#define __STM32F723E_DISCOVERY_BSP_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version */
-#define __STM32F723E_DISCOVERY_BSP_VERSION_SUB2   (0x03) /*!< [15:8]  sub2 version */
+#define __STM32F723E_DISCOVERY_BSP_VERSION_SUB1   (0x01) /*!< [23:16] sub1 version */
+#define __STM32F723E_DISCOVERY_BSP_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
 #define __STM32F723E_DISCOVERY_BSP_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32F723E_DISCOVERY_BSP_VERSION        ((__STM32F723E_DISCOVERY_BSP_VERSION_MAIN << 24)\
                                                  |(__STM32F723E_DISCOVERY_BSP_VERSION_SUB1 << 16)\

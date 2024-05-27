@@ -155,80 +155,80 @@ uint8_t BSP_TS_Init(uint16_t ts_SizeX, uint16_t ts_SizeY)
 uint8_t BSP_TS_InitEx(uint16_t ts_SizeX, uint16_t ts_SizeY, uint8_t  orientation)
 {
   uint8_t ts_status = TS_OK;
+  uint32_t id_value = 0;
 
   /* Note : I2C_Address is un-initialized here, but is not used at all in init function */
   /* but the prototype of Init() is like that in template and should be respected       */
 
-  /* Scan TouchScreen IC controller ID register by I2C Read               */
-  /* Verify this is a FT6x36 or FT3x67, otherwise this is an error case   */
-  
-#if defined (USE_STM32F723E_DISCO_REVD)
   /* Initialize the communication channel to sensor (I2C) if necessary */
   /* that is initialization is done only once after a power up         */
-  ft3x67_ts_drv.Init(I2C_Address);
+  /* Scan TouchScreen IC controllers ID register by I2C Read           */
+    ft6x06_ts_drv.Init(I2C_Address);
+    id_value = ft6x06_ts_drv.ReadID(TS_I2C_ADDRESS);
 
-  if(ft3x67_ts_drv.ReadID(TS_I2C_ADDRESS) == FT3X67_ID_VALUE)
-  {
-    /* Found FT3x67 : Initialize the TS driver structure */
-    tsDriver = &ft3x67_ts_drv;
-    I2C_Address = TS_I2C_ADDRESS;
-    /* Get LCD chosen orientation */
-    if(orientation == TS_ORIENTATION_PORTRAIT)
+    /* Verify this is a FT6x36 or FT3x67, otherwise this is an error case   */
+    if(id_value == FT6x36_ID_VALUE)
     {
-      tsOrientation = TS_SWAP_Y;
-    }
-    else if(orientation == TS_ORIENTATION_LANDSCAPE_ROT180)
-    {
-      tsOrientation = TS_SWAP_XY;
-    }
-    else
-    {
-      tsOrientation = TS_SWAP_XY | TS_SWAP_Y;
-    }
-    if(ts_status == TS_OK)
-    {
-      /* Software reset the TouchScreen */
-      tsDriver->Reset(I2C_Address);
-      /* Calibrate, Configure and Start the TouchScreen driver */
-      tsDriver->Start(I2C_Address);
-    } /* of if(ts_status == TS_OK) */
-  }
-#else /* USE_STM32F723E_DISCO */
-  /* Initialize the communication channel to sensor (I2C) if necessary */
-  /* that is initialization is done only once after a power up         */
-  ft6x06_ts_drv.Init(I2C_Address);
- 
-  if(ft6x06_ts_drv.ReadID(TS_I2C_ADDRESS) == FT6x36_ID_VALUE)
-  {
-    /* Found FT6x36 : Initialize the TS driver structure */
-    tsDriver = &ft6x06_ts_drv;
-    I2C_Address = TS_I2C_ADDRESS;
-    /* Get LCD chosen orientation */
-    if(orientation == TS_ORIENTATION_PORTRAIT)
-    {
-      tsOrientation = TS_SWAP_X | TS_SWAP_Y;
-    }
-    else if(orientation == TS_ORIENTATION_LANDSCAPE_ROT180)
-    {
-      tsOrientation = TS_SWAP_XY;
+      /* Found FT6x36 : Initialize the TS driver structure */
+      tsDriver = &ft6x06_ts_drv;
+      I2C_Address = TS_I2C_ADDRESS;
+      /* Get LCD chosen orientation */
+      if(orientation == TS_ORIENTATION_PORTRAIT)
+      {
+        tsOrientation = TS_SWAP_X | TS_SWAP_Y;
+      }
+      else if(orientation == TS_ORIENTATION_LANDSCAPE_ROT180)
+      {
+        tsOrientation = TS_SWAP_XY;
+      }
+      else
+      {
+        tsOrientation = TS_SWAP_XY | TS_SWAP_Y;
+      }
+      if(ts_status == TS_OK)
+      {
+        /* Software reset the TouchScreen */
+        tsDriver->Reset(I2C_Address);
+        /* Calibrate, Configure and Start the TouchScreen driver */
+        tsDriver->Start(I2C_Address);
+      } /* of if(ts_status == TS_OK) */
     }
     else
     {
-      tsOrientation = TS_SWAP_XY | TS_SWAP_Y;
+      ft3x67_ts_drv.Init(I2C_Address);
+      id_value = ft3x67_ts_drv.ReadID(TS_I2C_ADDRESS);
+
+      if(id_value == FT3X67_ID_VALUE)
+      {
+        /* Found FT3x67 : Initialize the TS driver structure */
+        tsDriver = &ft3x67_ts_drv;
+        I2C_Address = TS_I2C_ADDRESS;
+        /* Get LCD chosen orientation */
+        if(orientation == TS_ORIENTATION_PORTRAIT)
+        {
+          tsOrientation = TS_SWAP_Y;
+        }
+        else if(orientation == TS_ORIENTATION_LANDSCAPE_ROT180)
+        {
+          tsOrientation = TS_SWAP_XY;
+        }
+        else
+        {
+          tsOrientation = TS_SWAP_XY | TS_SWAP_Y;
+        }
+        if(ts_status == TS_OK)
+        {
+          /* Software reset the TouchScreen */
+          tsDriver->Reset(I2C_Address);
+          /* Calibrate, Configure and Start the TouchScreen driver */
+          tsDriver->Start(I2C_Address);
+        } /* of if(ts_status == TS_OK) */
+      }
+      else
+      {
+        ts_status = TS_DEVICE_NOT_FOUND;
+      }
     }
-    if(ts_status == TS_OK)
-    {
-      /* Software reset the TouchScreen */
-      tsDriver->Reset(I2C_Address);
-      /* Calibrate, Configure and Start the TouchScreen driver */
-      tsDriver->Start(I2C_Address);
-    } /* of if(ts_status == TS_OK) */
-  }
-#endif /* USE_STM32F723E_DISCO_REVD */
-  else
-  {
-    ts_status = TS_DEVICE_NOT_FOUND;
-  }
 
   return (ts_status);
 }

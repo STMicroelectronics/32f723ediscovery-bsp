@@ -27,13 +27,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f723e_discovery.h"
-
 /* Include TouchScreen component driver */
-#if defined (USE_STM32F723E_DISCO_REVD)
 #include "../Components/ft3x67/ft3x67.h"
-#else /* USE_STM32F723E_DISCO */
 #include "../Components/ft6x06/ft6x06.h"
-#endif /* USE_STM32F723E_DISCO_REVD */
+
 /** @addtogroup BSP
   * @{
   */
